@@ -176,6 +176,14 @@ module K8s
       api_versions.map{ |api_version| api(api_version) }
     end
 
+    def logs(resource, name, namespace: nil, container: nil, follow: false, **options)
+      resource_client = client_for_resource(resource)
+      namespace ||= resource_client.namespace || @namespace
+      resource_client.logs(name, namespace: namespace, container: container, follow: follow, **options) do |chunk|
+        yield chunk
+      end
+    end
+
     # @param namespace [String, nil]
     # @return [Array<K8s::ResourceClient>]
     def resources(namespace: nil)

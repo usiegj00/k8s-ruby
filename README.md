@@ -226,6 +226,15 @@ client.api('v1').resource('pods', namespace: 'default').watch(labelSelector: {'r
 end
 ```
 
+### Watching Logs
+
+This will continuously stream logs from the specified pod and container, printing each chunk as it's received.
+```
+client.logs('pods', 'my-pod', namespace: 'default', container: 'my-container', follow: true) do |chunk|
+  puts chunk
+end
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at [k8s-ruby/k8s-ruby](https://github.com/k8s-ruby/k8s-ruby).

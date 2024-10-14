@@ -249,6 +249,23 @@ module K8s
       )
     end
 
+    def logs(name, namespace: @namespace, container: nil, follow: false, **options)
+      path = "#{path(name, namespace: namespace)}/log"
+      query = options.merge({
+        container: container,
+        follow: follow
+      }).compact
+    
+      @transport.request(
+        method: 'GET',
+        path: path,
+        query: query,
+        response_class: nil,
+        read_timeout: follow ? nil : 60,
+        response_block: ->(chunk, _, _) { yield chunk if block_given? }
+      )
+    end
+
     # @return [Boolean]
     def update?
       @api_resource.verbs.include? 'update'

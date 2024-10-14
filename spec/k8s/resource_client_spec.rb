@@ -387,3 +387,24 @@ RSpec.describe K8s::ResourceClient do
     end
   end
 end
+
+describe '#logs' do
+  let(:transport) { instance_double(K8s::Transport) }
+
+  subject { described_class.new(transport, api_client, resource) }
+
+  it 'requests logs from the API' do
+    expect(transport).to receive(:request).with(
+      method: 'GET',
+      path: '/api/v1/namespaces/default/pods/test-pod/log',
+      query: { container: 'test-container', follow: true },
+      response_class: nil,
+      read_timeout: nil,
+      response_block: instance_of(Proc)
+    )
+
+    subject.logs('test-pod', container: 'test-container', follow: true) do |chunk|
+      # In a real scenario, you would process the log chunk here
+    end
+  end
+end
